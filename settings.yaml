@@ -1,1 +1,96 @@
-# Auto-generated file for web_crawler
+# Database Health Check Configuration for web_crawler
+
+# Database connections to monitor
+databases:
+  # Primary PostgreSQL database
+  primary:
+    type: postgresql
+    host: localhost
+    port: 5432
+    database: web_crawler_production
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+    # Connection settings
+    timeout: 5
+    retry_attempts: 3
+    retry_delay: 1
+    persistent: false
+
+    # PostgreSQL-specific settings
+    sslmode: prefer # Options: disable, allow, prefer, require, verify-ca, verify-full
+    statement_timeout: 30000 # milliseconds
+    application_name: web_crawler_health_check
+
+    # Health check configuration
+    check_replication: false
+    max_replication_lag: 60 # seconds
+    validation_query: "SELECT 1"
+
+  # Replica database (optional)
+  replica:
+    type: postgresql
+    host: localhost
+    port: 5433
+    database: web_crawler_production
+    username: ${DB_REPLICA_USERNAME}
+    password: ${DB_REPLICA_PASSWORD}
+
+    timeout: 5
+    retry_attempts: 3
+    retry_delay: 1
+    sslmode: prefer
+
+    # Enable replication lag monitoring for replica
+    check_replication: true
+    max_replication_lag: 30
+
+  # MySQL database (example)
+  mysql_backup:
+    type: mysql
+    host: localhost
+    port: 3306
+    database: web_crawler_backup
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
+    timeout: 5
+    retry_attempts: 3
+    retry_delay: 1
+
+  # SQLite database (example)
+  local_cache:
+    type: sqlite
+    database: /var/lib/web_crawler/cache.db
+    timeout: 2
+
+# Health check scheduler settings
+health_checks:
+  enabled: true
+  interval: 60 # seconds between health checks
+  alert_on_failure: true
+  alert_threshold: 3 # number of consecutive failures before alerting
+
+  # Specific checks to run
+  checks:
+    - ActiveRecordCheck
+
+  # Alerting configuration
+  alerting:
+    enabled: true
+    channels:
+      - type: log
+        level: error
+      - type: webhook
+        url: ${ALERT_WEBHOOK_URL}
+        timeout: 10
+
+    # Alert throttling
+    throttle_minutes: 15 # minimum time between repeat alerts
+
+# Logging configuration
+logging:
+  level: info # debug, info, warning, error
+  file: /var/log/web_crawler/health_checks.log
+  max_size_mb: 100
+  rotate: true
+  retention_days: 30

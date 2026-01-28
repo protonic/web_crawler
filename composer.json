@@ -1,0 +1,41 @@
+# Composer Configuration
+{
+  "name": "artist-kota-nih/web_crawler",
+  "description": "Database health monitoring system with ActiveRecord-style connectivity checks for PostgreSQL",
+  "type": "library",
+  "license": "MIT",
+  "keywords": [
+    "database",
+    "health-check",
+    "postgresql",
+    "monitoring",
+    "activerecord"
+  ],
+  "authors": [
+    {
+      "name": "artist-kota-nih"
+    }
+  ],
+  "require": {
+    "php": ">=8.0",
+    "ext-pdo": "*",
+    "ext-pdo_pgsql": "*"
+  },
+  "require-dev": {
+    "symfony/yaml": "^6.0"
+  },
+  "suggest": {
+    "ext-pdo_mysql": "For MySQL database support",
+    "ext-pdo_sqlite": "For SQLite database support",
+    "symfony/yaml": "For YAML configuration file parsing"
+  },
+  "autoload": {
+    "psr-4": {
+      "WebCrawler\\": "lib/"
+    }
+  },
+  "scripts": {
+    "test": "php assets/smoke_test.php",
+    "check": "php lib/HealthCheckRunner.php settings.yaml --once"
+  }
+}
